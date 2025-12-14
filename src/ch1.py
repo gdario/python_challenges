@@ -1,5 +1,6 @@
-import math
 from collections import deque
+import itertools as it
+import math
 
 
 def extract_digits(number):
@@ -197,6 +198,32 @@ def combinatorics1(max_val=100):
             if csq in squares:
                 results.append((n, m, int(math.sqrt(csq))))
     return results
+
+
+def calc_max_possible_change(values):
+    results = set()
+    for k in range(1, len(values) + 1):
+        combs = it.combinations(values, k)
+        for comb in combs:
+            s = sum(comb)
+            if s not in results:
+                results.add(s)
+    return len(results)
+
+
+def calc_prime_factors(num):
+    if is_prime(num):
+        return [num]
+    else:
+        prime_factors = []
+        primes = eratosthenes_sieve1(num)
+        for prime in primes:
+            quotient, remainder = divmod(num, prime)
+            if remainder == 0:
+                while quotient > 0 and remainder == 0:
+                    prime_factors.append(prime)
+                    quotient, remainder = divmod(quotient, prime)
+    return prime_factors
 
 
 if __name__ == '__main__':
