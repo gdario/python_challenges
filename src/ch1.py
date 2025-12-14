@@ -54,6 +54,47 @@ def eratosthenes_sieve1(number):
     return primes
 
 
+def eratosthenes_sieve2(number):
+    primes = set()
+    queue = deque(range(2, number + 1))
+    while queue:
+        p = queue.popleft()
+        primes.add(p)
+        for _ in range(len(queue)):
+            q = queue.popleft()
+            if q % p > 0:
+                queue.append(q)
+    return primes
+
+
+def erase_multiple_of_current(values, number):
+    for n in range(number + number, len(values), number):
+        values[n] = False
+
+
+def build_primes_list(is_potentially_prime):
+    return [number for number in range(2, len(is_potentially_prime))
+            if is_potentially_prime[number]]
+
+
+def calc_primes_up_to(max_value):
+    is_potentially_prime = [True for _ in range(1, max_value + 2)]
+    for number in range(2, max_value // 2 + 1):
+        if is_potentially_prime[number]:
+            erase_multiple_of_current(is_potentially_prime, number)
+    return build_primes_list(is_potentially_prime)
+
+
+def calc_primes_up_to_v2(max_value):
+    is_potentially_prime = [True for _ in range(1, max_value + 2)]
+    for number in range(2, max_value // 2 + 1):
+        if is_potentially_prime[number]:
+            erase_multiple_of_current(is_potentially_prime, number)
+    is_potentially_prime[0:2] = False, False
+    return list(it.compress(range(len(is_potentially_prime)),
+                            is_potentially_prime))
+
+
 def is_prime(number):
     return number in eratosthenes_sieve1(number)
 
@@ -72,6 +113,22 @@ def prime_number_pairs(number, dist=2):
 def is_perfect_number(number):
     proper_divisors = find_proper_divisors(number)
     return sum(proper_divisors) == number
+
+
+def is_perfect_number2(number):
+    sum = 0
+    for divisor in range(1, number):
+        if number % divisor == 0:
+            sum += divisor
+    return number == sum
+
+
+def is_perfect_number3(number):
+    sum_of_divisors = 1
+    for divisor in range(2, number // 2 + 1):
+        if number % divisor == 0:
+            sum_of_divisors += divisor
+    return number == sum_of_divisors
 
 
 def calc_perfect_numbers(max_exclusive):
@@ -99,12 +156,14 @@ def calc(m, n):
 
 
 def calc_sum_and_count_all_numbers_div_by_2_or_7_exclusive(max_exclusive):
-    candidates = range(2, max_exclusive)
-    results = []
-    for candidate in candidates:
-        if candidate % 2 == 0 or candidate % 7 == 0:
-            results.append(candidate)
-    return len(results), sum(results)
+    count = 0
+    sum = 0
+    for i in range(1, max_exclusive):
+        if i % 2 == 0 or i % 7 == 0:
+            count += 1
+            sum += 1
+    print("Count: ", count)
+    print("Sum: ", sum)
 
 
 def number_to_text(n):
@@ -122,6 +181,17 @@ def number_to_text(n):
         9: 'NINE'
     }
     return ' '.join([mapping[digit] for digit in digits])
+
+
+def number_to_text2(n):
+    result = ''
+    mapping = {
+        0: 'ZERO', 1: 'ONE', 2: 'TWO', 3: 'THREE', 4: 'FOUR', 5: 'FIVE',
+        6: 'SIX', 7: 'SEVEN', 8: 'EIGHT', 9: 'NINE'}
+    while n > 0:
+        n, r = divmod(n, 10)
+        result = mapping[r] + ' ' + result
+    return result
 
 
 def roman_to_decimal(roman_number):
